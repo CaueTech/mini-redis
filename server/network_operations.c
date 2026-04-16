@@ -1,4 +1,3 @@
-
 #include <stdlib.h>      // malloc, free
 #include <string.h>      // memset, strlen, strncpy, strcmp
 #include <unistd.h>      // close
