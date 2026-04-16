@@ -6,6 +6,7 @@
 #define KEY_SIZE 50
 #define VALUE_SIZE 500
 #define TABLE_SIZE 1024
+#define BUFFER_SIZE 1024
 
 typedef struct {
     struct sockaddr_in server_address;
@@ -25,10 +26,6 @@ typedef struct hash_entry {
     struct hash_entry* next; // Para tratar colisões (lista encadeada)
 } hash_entry;
 
-hash_entry * initialize_entry(){
-    hash_entry * pointer_collection[TABLE_SIZE];
-    return pointer_collection;
-};
 
 /*
     Temos um array de ponteiros para as entries (nós), nós que por sua vez são dicionário (key -> value), 

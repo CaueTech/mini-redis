@@ -8,12 +8,16 @@
 #include <sys/select.h>  // fd_set, FD_CLR, FD_ISSET
 
 #include "../headers/structs.h"
-#include "hash_function.c"
+#include "../headers/server.h"
 
 server_info* create_listening_socket() {
     server_info* server = malloc(sizeof(server_info));
 
     server->ls_socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if(server->ls_socket_fd == -1){
+    	return NULL;
+    	// SO falhou em definir o file descriptor
+    }
 
     server->server_address.sin_family = AF_INET;
     server->server_address.sin_addr.s_addr = INADDR_ANY;
@@ -22,8 +26,17 @@ server_info* create_listening_socket() {
     return server;
 }
 
-int bind_server(int socket_fd, struct sockaddr_in address) {
-    return bind(socket_fd, (struct sockaddr*)&address, sizeof(address));
+int bind_server(int ls_socket_fd, struct sockaddr_in address){
+	int opt = 1;
+	setsockopt(ls_socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	
+	/*
+		Essas primeiras linhas configuram o SO para impedir que ele bloqueie o servidor
+		de usar a mesma porta previamente usada em caso de reinício do servidor.
+	*/
+
+
+    return bind(ls_socket_fd, (struct sockaddr*)&address, sizeof(address));
 }
 
 int accept_connection(int server_fd, struct sockaddr_in* client_addr) {
@@ -44,8 +57,8 @@ void close_connection(int fd, int * fdmax, fd_set* master) {
     close(fd);
     FD_CLR(fd, master);
 
-    if(fd == fdmax){
-    	while(fdmax > 0 && !FD_ISSET(fdmax, master)){
+    if(fd == *fdmax){
+    	while(*fdmax > 0 && !FD_ISSET(*fdmax, master)){
     		fdmax--;
     	}
     }
@@ -61,7 +74,10 @@ int set(command_block cmd, hash_entry ** pointer_collection){
 		if(new_entry == NULL) return 0; // malloc() returna NULL se falha alocação
 
 		strncpy(new_entry->key, cmd.key, sizeof(new_entry->key));
+		new_entry->key[sizeof(new_entry->key) - 1] = '\0';
+		
 		strncpy(new_entry->value, cmd.value, sizeof(new_entry->value));
+		new_entry->value[sizeof(new_entry->value) - 1] = '\0';
 		new_entry->next = NULL;
 
 		pointer_collection[hash] = new_entry;
@@ -75,6 +91,7 @@ int set(command_block cmd, hash_entry ** pointer_collection){
 			// Busca achar uma duplicata da chave para subsituir o valor captado
 			if(strcmp(dict_entry->key, cmd.key) == 0){
 				strncpy(dict_entry->value, cmd.value, sizeof(dict_entry->value));
+				dict_entry->key[sizeof(dict_entry->key) - 1] = '\0';
 				return 1;
 			}
 
@@ -82,8 +99,12 @@ int set(command_block cmd, hash_entry ** pointer_collection){
 			if(dict_entry->next == NULL){
 				hash_entry * new_entry = malloc(sizeof(hash_entry));
 				if(new_entry == NULL) return 0; // malloc() returna NULL se falha alocação
-				strncpy(dict_entry->key, cmd.key, sizeof(dict_entry->key));
+				
+				strncpy(new_entry->key, cmd.key, sizeof(dict_entry->key));
+				new_entry->key[sizeof(new_entry->key) - 1] = '\0';
+				
 				strncpy(new_entry->value, cmd.value, sizeof(dict_entry->value));
+				new_entry->value[sizeof(new_entry->value) - 1] = '\0';
 				new_entry->next = NULL;
 
 				dict_entry->next = new_entry;
@@ -96,13 +117,13 @@ int set(command_block cmd, hash_entry ** pointer_collection){
 	}
 }
 
-hash_entry ** get(command_block cmd, hash_entry ** pointer_collection){
+hash_entry * get(command_block cmd, hash_entry ** pointer_collection){
 	unsigned int hash = hash_function(cmd.key);
 	hash_entry * dict_entry = pointer_collection[hash];
 	while(dict_entry != NULL){
 		
 		if(!strcmp(cmd.key, dict_entry->key)){
-			return &dict_entry;			
+			return dict_entry;			
 		}
 		dict_entry = dict_entry->next;
 	}

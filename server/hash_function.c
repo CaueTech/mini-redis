@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "../headers/structs.h"
 
 unsigned int hash_function(char *str) {
@@ -9,5 +10,15 @@ unsigned int hash_function(char *str) {
 }
 
 /*
-	A hash_function transforma o valor do nome da variável desejada pelo usuário em um índice para o array de ponteiros.
+    A hash_function transforma o valor do nome da variável desejada pelo usuário em um índice para o array de ponteiros.
 */
+
+hash_entry ** initialize_entry(){
+    hash_entry ** pointer_collection = malloc(sizeof(hash_entry) * TABLE_SIZE);
+    return pointer_collection;
+
+    /*
+        Usamos alocação dinâmica porque depois que a função retorna, a memória - se tivesse em Stack, iria
+        ser liberada, então retornariamos um ponteiro que aponta para lixo.
+    */
+};
