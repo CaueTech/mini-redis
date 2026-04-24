@@ -15,8 +15,6 @@ Nesta versão, o foco está em:
 - Armazenamento em memória (key-value store)
 - Parsing de comandos simples
 
----
-
 ## ⚙️ Funcionalidades
 
 - ✅ Comando `SET key value`
@@ -28,9 +26,6 @@ Ainda falta:
 - ❌ Persistência (AOF ainda não implementado)
 - ❌ TTL
 - ❌ Threads (concorrência simulada)
-
-
----
 
 ## 🛠️ Como Rodar
 
