@@ -1,115 +1,114 @@
 # Mini-Redis
 
-Uma implementação robusta e simplificada de um servidor estilo Redis, escrita em C. Este projeto suporta armazenamento em memória com resolução de colisões, expiração de chaves (TTL) e processamento concorrente baseado em multiplexação com `select()`.
+A robust and simplified Redis-like server implementation written in C. This project supports in-memory key-value storage with collision handling, key expiration (TTL), and concurrent client processing through I/O multiplexing using `select()`.
 
-**Versão: Mark II**
+**Version: Mark II**
 
-## 🚀 Visão Geral
+## 🚀 Overview
 
-O **Mini-Redis** é um projeto focado no entendimento aprofundado de sistemas distribuídos, gerenciamento de memória em C e construção de servidores de alto desempenho do zero.
+**Mini-Redis** is an educational project focused on gaining a deeper understanding of distributed systems concepts, memory management in C, and high-performance server development from scratch.
 
-Nesta versão atualizada, o motor do banco de dados ganhou persistência de dados e um gerenciador de tempo de vida (TTL) baseado em uma estrutura de Min-Heap.
+In this updated version, the database engine has been extended with data persistence and a Time-To-Live (TTL) manager based on a Min-Heap data structure.
 
-> Implementação educacional inspirada no Redis com Hash Table customizada, gerenciamento de TTL por Min-Heap, persistência AOF e servidor concorrente baseado em `select()`.
+> An educational Redis-inspired implementation featuring a custom Hash Table, Min-Heap-based TTL management, AOF persistence, and an event-driven concurrent TCP server powered by `select()`.
 
 ---
 
-## 📊 Tecnologias e Conceitos
+## 📊 Technologies and Concepts
 
-* Linguagem C
-* Sockets TCP/IP
-* Multiplexação de I/O com `select()`
+* C Programming Language
+* TCP/IP Sockets
+* I/O Multiplexing with `select()`
 * Hash Tables
 * Linked Lists
 * Min-Heaps
-* Persistência baseada em logs (AOF)
-* Gerenciamento manual de memória
-* Arquitetura orientada a eventos
+* Append-Only File (AOF) Persistence
+* Manual Memory Management
+* Event-Driven Architecture
 
 ---
 
-## ⚙️ Funcionalidades
+## ⚙️ Features
 
-* ✅ **Tabela Hash Customizada:** Armazenamento em memória com encadeamento (Linked Lists) para resolução de colisões.
-* ✅ **Multiplexação de I/O:** Suporte a múltiplos clientes simultâneos via `select()`, sem a sobrecarga de threads.
-* ✅ **TTL (Time-to-Live):** Expiração passiva e ativa de chaves gerenciada através de uma Min-Heap.
-* ✅ **Persistência de Dados (AOF):** Gravação de logs transacionais para recuperação do banco de dados após reinicializações.
-* ✅ **Comandos Suportados:** `SET`, `GET` e `DEL`.
+* ✅ **Custom Hash Table:** In-memory storage with collision resolution through linked-list chaining.
+* ✅ **I/O Multiplexing:** Handles multiple concurrent clients using `select()` without thread overhead.
+* ✅ **TTL (Time-To-Live):** Active and passive key expiration managed through a Min-Heap.
+* ✅ **Data Persistence (AOF):** Transaction log recording for database recovery after restarts.
+* ✅ **Supported Commands:** `SET`, `GET`, and `DEL`.
 
 ---
 
-## 📂 Arquitetura de Diretórios
+## 📂 Project Structure
 
-O código foi refatorado e modularizado para separar responsabilidades de rede, estado e estruturas de dados.
+The codebase has been modularized to separate networking, state management, and data structure responsibilities.
 
 ```text
 .
-├── build/                  # Diretório auto-gerado para arquivos objeto (.o)
-├── headers/                # Arquivos de cabeçalho e definições
+├── build/                  # Auto-generated object files (.o)
+├── headers/                # Header files and definitions
 │   ├── server.h
 │   └── structs.h
 ├── main/
-│   └── main.c              # Ponto de entrada (Loop principal do servidor)
+│   └── main.c              # Application entry point (main server loop)
 ├── server/
-│   ├── data/               # Lógica de estruturas de dados e parser
-│   │   ├── llist_hash.c    # Implementação da Tabela Hash e Listas Encadeadas
-│   │   ├── mheap.c         # Gerenciamento da Min-Heap (TTL)
-│   │   └── parsing.c       # Validador e interpretador de comandos
-│   ├── network.c           # Gerenciamento de Sockets TCP e conexões
-│   └── states.c            # Máquina de estados e execução de comandos
-├── .gitignore
-├── log.txt                 # Arquivo de persistência (Append-Only File)
-├── Makefile                # Script de automação de build
+│   ├── data/               # Data structures and command parsing
+│   │   ├── llist_hash.c    # Hash Table and Linked List implementation
+│   │   ├── mheap.c         # Min-Heap implementation (TTL management)
+│   │   └── parsing.c       # Command parser and validator
+│   ├── network.c           # TCP socket and connection management
+│   └── states.c            # State machine and command execution
+├── log.txt                 # Append-Only persistence file
+├── Makefile                # Build automation
 └── README.md
 ```
 
 ---
 
-## 🛠️ Como Compilar e Rodar
+## 🛠️ Build and Run
 
-O projeto utiliza um **Makefile** para automatizar a compilação, mantendo os artefatos de build organizados e separados do código-fonte.
+The project uses a **Makefile** to automate compilation and keep build artifacts organized.
 
-### Pré-requisitos
+### Prerequisites
 
-* GCC instalado
-* Linux ou WSL (Windows Subsystem for Linux)
+* GCC Compiler
+* Linux or WSL (Windows Subsystem for Linux)
 
-### I. Compilação
+### I. Build
 
-Para compilar o projeto:
+To compile the project:
 
 ```bash
 make
 ```
 
-Para remover todos os artefatos gerados e realizar uma compilação limpa:
+To remove build artifacts and perform a clean build:
 
 ```bash
 make clean
 make
 ```
 
-### II. Execução
+### II. Run
 
-Após a compilação, inicie o servidor:
+After compilation, start the server:
 
 ```bash
 ./mini_redis
 ```
 
-O servidor ficará escutando em:
+The server listens by default on:
 
 ```text
 localhost:8080
 ```
 
-Para conectar um cliente de teste utilizando Netcat:
+To connect using Netcat:
 
 ```bash
 nc localhost 8080
 ```
 
-Ou utilizando Telnet:
+Or using Telnet:
 
 ```bash
 telnet localhost 8080
@@ -117,52 +116,52 @@ telnet localhost 8080
 
 ---
 
-## 💬 Comandos e Utilização
+## 💬 Commands and Usage
 
-O banco de dados armazena pares chave-valor.
+The database stores key-value pairs.
 
-> **Observação:** Os comandos e nomes das chaves são *case sensitive*. Portanto, `SET`, `set` e `Set` são tratados como comandos diferentes.
+> **Note:** Commands and key names are **case-sensitive**. Therefore, `SET`, `set`, and `Set` are treated as different commands.
 
 ### SET
 
 ```text
-SET <chave> <valor> [EX segundos]
+SET <key> <value> [EX seconds]
 ```
 
-Cria ou atualiza uma chave com um valor.
+Creates or updates a key with the specified value.
 
-O modificador opcional `EX` permite definir um tempo de vida (TTL) em segundos para a chave.
+The optional `EX` modifier sets a TTL (Time-To-Live) in seconds.
 
-**Exemplos:**
+**Examples:**
 
 ```text
-SET usuario_123 Joao EX 60
+SET user_123 John EX 60
 ```
 
-Armazena o valor `Joao` por 60 segundos.
+Stores the value `John` for 60 seconds.
 
 ```text
-SET configuracao dark_mode
+SET configuration dark_mode
 ```
 
-Armazena o valor permanentemente.
+Stores the value permanently.
 
 ---
 
 ### GET
 
 ```text
-GET <chave>
+GET <key>
 ```
 
-Busca e retorna o valor associado à chave.
+Retrieves the value associated with a key.
 
-Se a chave não existir ou tiver expirado, retorna uma resposta de erro ou valor nulo.
+If the key does not exist or has expired, the server returns an error or null value.
 
-**Exemplo:**
+**Example:**
 
 ```text
-GET usuario_123
+GET user_123
 ```
 
 ---
@@ -170,80 +169,80 @@ GET usuario_123
 ### DEL
 
 ```text
-DEL <chave>
+DEL <key>
 ```
 
-Remove imediatamente uma chave da memória.
+Removes a key immediately from memory.
 
-Caso a chave possua TTL associado, ela também é removida da Min-Heap responsável pelo gerenciamento das expirações.
+If the key has an associated TTL, it is also removed from the Min-Heap responsible for expiration tracking.
 
-**Exemplo:**
+**Example:**
 
 ```text
-DEL configuracao
+DEL configuration
 ```
 
 ---
 
-## 💾 Persistência de Dados (AOF)
+## 💾 Data Persistence (AOF)
 
-Para evitar perda de dados em desligamentos inesperados, o sistema implementa um mecanismo inspirado no **Append-Only File (AOF)** utilizado pelo Redis.
+To prevent data loss during unexpected shutdowns, the system implements a persistence mechanism inspired by Redis's **Append-Only File (AOF)**.
 
-Sempre que um comando de escrita (`SET` ou `DEL`) é executado com sucesso:
+Whenever a write operation (`SET` or `DEL`) is successfully executed:
 
-1. A operação é aplicada na memória.
-2. O comando é imediatamente anexado ao arquivo `log.txt`.
+1. The operation is applied in memory.
+2. The command is immediately appended to `log.txt`.
 
-Durante a inicialização do servidor, o arquivo é lido sequencialmente e todos os comandos são reexecutados internamente, reconstruindo o estado da Tabela Hash e da Min-Heap antes que novas conexões sejam aceitas.
+During server startup, the log file is read sequentially and all commands are replayed internally, rebuilding the Hash Table and Min-Heap state before accepting new client connections.
 
-Esse mecanismo garante recuperação consistente do estado do banco após reinicializações.
+This approach ensures consistent recovery of the database state after restarts.
 
 ---
 
-## 📈 Conceitos Praticados
+## 📈 Concepts Explored
 
-Este projeto explora diversos conceitos fundamentais de Engenharia de Software e Sistemas:
+This project explores several fundamental Software Engineering and Systems Programming concepts.
 
-### Estruturas de Dados
+### Data Structures
 
 * Hash Tables
 * Linked Lists
 * Min-Heaps
 
-### Programação de Sistemas
+### Systems Programming
 
-* Sockets TCP
-* Multiplexação de I/O com `select()`
-* Gerenciamento manual de memória
+* TCP Sockets
+* I/O Multiplexing with `select()`
+* Manual Memory Management
 
-### Bancos de Dados
+### Database Concepts
 
-* Armazenamento chave-valor
-* Persistência baseada em logs (AOF)
-* Expiração de chaves (TTL)
+* Key-Value Storage
+* Log-Based Persistence (AOF)
+* Key Expiration (TTL)
 
-### Arquitetura de Software
+### Software Architecture
 
-* Modularização de componentes
-* Separação de responsabilidades
-* Máquina de estados para processamento de comandos
-
----
-
-## 🎯 Objetivos do Projeto
-
-Este projeto foi desenvolvido com fins educacionais para aprofundar conhecimentos em:
-
-* Sistemas distribuídos
-* Desenvolvimento de servidores de alta performance
-* Estruturas de dados de baixo nível
-* Persistência de dados
-* Programação de redes em C
-
-Inspirado na arquitetura do Redis, o Mini-Redis busca reproduzir seus conceitos fundamentais de forma simplificada, permitindo estudar internamente o funcionamento de um banco de dados em memória moderno.
+* Component Modularization
+* Separation of Concerns
+* State Machine-Based Command Processing
 
 ---
 
-## 📄 Licença
+## 🎯 Project Goals
 
-Este projeto é distribuído para fins educacionais e de aprendizado.
+This project was developed for educational purposes with the objective of deepening knowledge in:
+
+* Distributed Systems Concepts
+* High-Performance Server Development
+* Low-Level Data Structures
+* Data Persistence Mechanisms
+* Network Programming in C
+
+Inspired by Redis's architecture, Mini-Redis aims to reproduce its core concepts in a simplified manner, providing a hands-on way to study how modern in-memory databases operate internally.
+
+---
+
+## 📄 License
+
+This project is distributed for educational and learning purposes.
